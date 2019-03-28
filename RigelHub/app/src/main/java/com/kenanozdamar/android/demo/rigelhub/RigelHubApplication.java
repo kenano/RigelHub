@@ -2,6 +2,7 @@ package com.kenanozdamar.android.demo.rigelhub;
 
 import android.app.Application;
 
+import com.kenanozdamar.android.demo.services.ServicesFacade;
 import com.kenanozdamar.android.demo.services.network.OkHttpClientFactory;
 
 public class RigelHubApplication extends Application {
@@ -11,6 +12,7 @@ public class RigelHubApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initializeOkHttp();
+        ServicesFacade.getServiceFacade();
     }
     // endregion
 
