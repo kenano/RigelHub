@@ -23,19 +23,12 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getName();
 
-    private GithubClientFacade clientFacade;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
-        ServicesFacade servicesFacade = ServicesFacade.getServiceFacade();
-        if (servicesFacade != null) clientFacade = servicesFacade.getGithubClientFacade();
-        displaySearchResultsFramgent();
     }
 
     // endregion
@@ -56,9 +49,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // region fragment navigation
-    private void displaySearchResultsFramgent() {
+    private void displaySearchResultsFragment(String searchQuery) {
         Log.d(TAG, "Displaying search results fragment.");
-        SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
+        SearchResultsFragment searchResultsFragment = SearchResultsFragment.newInstance(searchQuery);
         pushStateless(R.id.main_frame, searchResultsFragment, null, false);
 
     }
@@ -100,9 +93,10 @@ public class MainActivity extends AppCompatActivity {
     private SearchView.OnQueryTextListener createSearchQueryListener() {
         return new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
+            public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "Query submitted.");
-                if (clientFacade != null) clientFacade.request(s);
+//                if (clientFacade != null) clientFacade.request(s);
+                displaySearchResultsFragment(query);
                 return true;
             }
 
