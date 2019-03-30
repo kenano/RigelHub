@@ -3,7 +3,11 @@ package com.kenanozdamar.android.demo.services.githubclient;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kenanozdamar.android.demo.services.githubclient.models.SearchResults;
 import com.kenanozdamar.android.demo.services.network.NetworkFacade;
+
+import java.util.Locale;
 
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
@@ -11,8 +15,8 @@ import io.reactivex.schedulers.Schedulers;
 import static android.content.ContentValues.TAG;
 
 public class GithubClientFacade {
-    private static final String URL = "https://api.github.com/search/repositories?q=mario+language:kotlin&sort=stars&order=desc";
-//    https://api.github.com/orgs/nytimes/repos
+
+    private static final String BASE_URL = "https://api.github.com/search/repositories?q=+org:%1$s&sort=stars&order=desc";
 
     private NetworkFacade networkFacade;
 
@@ -23,8 +27,8 @@ public class GithubClientFacade {
     // endregion
 
     // region Request.
-    public void request() {
-        makeRequest(URL)
+    public void request(String searchParameter) {
+        makeRequest(buildUrl(searchParameter))
                 .subscribeOn(Schedulers.io())
                 .flatMap((dataAsString) -> {
                     Log.d(TAG, dataAsString);
@@ -41,7 +45,29 @@ public class GithubClientFacade {
     }
     // endregion
 
-    private Observable<String> parse(@NonNull String dataAsString) {
-        return Observable.fromArray(new String[]{dataAsString});
+
+    private Observable<SearchResults> parse(@NonNull String dataAsString) {
+        return Observable.create((observer) -> {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                SearchResults searchResults = mapper.readValue(dataAsString, SearchResults.class);
+                int x = 1;
+
+            } catch (Throwable ex) {
+                observer.onError(ex);
+            }
+        });
     }
+
+
+
+    // region url helpers
+    private String buildUrl(String query) {
+        return String.format(
+                Locale.getDefault(),
+                BASE_URL,
+                query
+        );
+    }
+    // endregion
 }
