@@ -11,7 +11,7 @@ public class Item {
     private String name;
 
     @JsonProperty("html_url")
-    private String stringUrl;
+    private String url;
 
     @JsonProperty("stargazers_count")
     private String stargazersCount;
@@ -26,12 +26,12 @@ public class Item {
         this.name = name;
     }
 
-    public String getStringUrl() {
-        return stringUrl;
+    public String getUrl() {
+        return url;
     }
 
-    public void setStringUrl(String stringUrl) {
-        this.stringUrl = stringUrl;
+    public void setUrl(String stringUrl) {
+        this.url = stringUrl;
     }
 
     public String getStargazersCount() {

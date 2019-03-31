@@ -29,6 +29,7 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     // endregion
 
     // region ivar(s)
+    private ResultsRecycleAdapter adapter;
     private RecyclerView recyclerView;
     private SearchResultsPresenter presenter;
     private String query;
@@ -43,6 +44,10 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     @Override
     public void showResults(SearchResults results) {
         Log.d(TAG, results.toString());
+        adapter.setData(results.getSearchResults());
+        adapter.notifyDataSetChanged();
+//        recyclerView.notify();
+
     }
     // endregion
 
@@ -61,6 +66,7 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter = new SearchResultsPresenter();
+        adapter = new ResultsRecycleAdapter(getContext());
     }
 
     @Nullable
@@ -77,6 +83,7 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        presenter.register(this);
         presenter.request(query);
     }
 
@@ -87,7 +94,6 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
         recyclerView = containerView.findViewById(R.id.recyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerView.Adapter adapter = new ResultsRecycleAdapter(getContext());
         recyclerView.setAdapter(adapter);
     }
 

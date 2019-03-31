@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SearchResults {
+public class ClientResults {
 
     // region JSON Properties.
     @JsonProperty("total_count")

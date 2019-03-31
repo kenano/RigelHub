@@ -16,12 +16,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.kenanozdamar.android.demo.rigelhub.search_results.fragments.SearchResultsFragment;
-import com.kenanozdamar.android.demo.services.ServicesFacade;
-import com.kenanozdamar.android.demo.services.githubclient.GithubClientFacade;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getName();
+
+    // region ivar(s)
+    SearchView searchView;
+    // endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem mSearch = menu.findItem(R.id.action_search);
 
-        SearchView searchView = (SearchView) mSearch.getActionView();
+        searchView = (SearchView) mSearch.getActionView();
         searchView.setQueryHint("Search");
         searchView.setOnQueryTextListener(createSearchQueryListener());
 
@@ -95,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "Query submitted.");
-//                if (clientFacade != null) clientFacade.request(s);
+                searchView.clearFocus();
                 displaySearchResultsFragment(query);
                 return true;
             }

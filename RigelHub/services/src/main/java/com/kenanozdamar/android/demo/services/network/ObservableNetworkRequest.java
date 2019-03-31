@@ -58,8 +58,6 @@ public class ObservableNetworkRequest {
 
                         final String contents = body.string();
                         observer.onNext(contents);
-//                        observer.onNext(new String[]{"", ""});
-//                        response.close();
                         observer.onComplete();
 
                     } catch (SocketTimeoutException ex) {
