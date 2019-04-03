@@ -80,7 +80,7 @@ public class ResultsRecycleAdapter
 
         @Override
         public void onClick(View view) {
-            Log.d(TAG,"*****Item clicked" + data.get(getAdapterPosition()).getWebUrl());
+            Log.d(TAG,"Item clicked" + data.get(getAdapterPosition()).getWebUrl());
             callbacks.onListItemSelected(getAdapterPosition());
 
         }
