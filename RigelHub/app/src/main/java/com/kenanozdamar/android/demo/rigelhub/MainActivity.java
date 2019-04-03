@@ -16,8 +16,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.kenanozdamar.android.demo.rigelhub.search_results.fragments.SearchResultsFragment;
+import com.kenanozdamar.android.demo.rigelhub.web.fragments.WebFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
     private static final String TAG = MainActivity.class.getName();
 
@@ -50,12 +51,26 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    // region MainCallbacks overrides
+    @Override
+    public void displayWeb(String url) {
+        Log.d(TAG, url);
+        displayWebFragment(url);
+    }
+
+    // endregion
+
     // region fragment navigation
     private void displaySearchResultsFragment(String searchQuery) {
         Log.d(TAG, "Displaying search results fragment.");
         SearchResultsFragment searchResultsFragment = SearchResultsFragment.newInstance(searchQuery);
         pushStateless(R.id.main_frame, searchResultsFragment, null, false);
 
+    }
+
+    private void displayWebFragment(@NonNull String url) {
+        WebFragment webFragment = WebFragment.newInstance(url);
+        pushStateless(R.id.main_frame, webFragment, null, false);
     }
     // endregion
 

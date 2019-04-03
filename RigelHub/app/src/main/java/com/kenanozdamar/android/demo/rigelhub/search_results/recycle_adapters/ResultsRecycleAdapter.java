@@ -3,12 +3,14 @@ package com.kenanozdamar.android.demo.rigelhub.search_results.recycle_adapters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.kenanozdamar.android.demo.rigelhub.R;
+import com.kenanozdamar.android.demo.rigelhub.search_results.fragments.FragmentCallbacks;
 import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResult;
 
 import java.util.ArrayList;
@@ -17,6 +19,10 @@ import java.util.List;
 public class ResultsRecycleAdapter
         extends RecyclerView.Adapter<ResultsRecycleAdapter.ResultViewHolder> {
 
+    // region TAG.
+    @SuppressWarnings("unused")
+    private static final String TAG = ResultsRecycleAdapter.class.getSimpleName();
+    // endregion
 
 //    String[] categories = {"Cat 1", "Cat 2", "Cat 3", "Cat 4" ,"Cat 5" ,"Cat 6","Cat 7",
 //            "Dog 1","Dog 2","Dog 3","Dog 4","Dog 5",
@@ -25,14 +31,23 @@ public class ResultsRecycleAdapter
 
     private List<SearchResult> data = new ArrayList<>();
     private Context context;
+    private FragmentCallbacks callbacks;
 
     public ResultsRecycleAdapter(@NonNull Context context) {
         this.context = context;
     }
 
+    public void register(FragmentCallbacks callbacks) {
+        this.callbacks = callbacks;
+    }
+
     public void setData(List<SearchResult> items) {
         data.clear();
         data.addAll(items);
+    }
+
+    public SearchResult getDataItem(int position) {
+        return data.get(position);
     }
 
     @NonNull
@@ -44,7 +59,6 @@ public class ResultsRecycleAdapter
 
     @Override
     public void onBindViewHolder(@NonNull ResultViewHolder viewHolder, int position) {
-//        viewHolder.setData(data.get(position));
         viewHolder.title.setText(data.get(position).getRepositoryName());
     }
 
@@ -53,7 +67,7 @@ public class ResultsRecycleAdapter
         return data.size();
     }
 
-    class ResultViewHolder extends RecyclerView.ViewHolder {
+    class ResultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView title;
 
@@ -61,6 +75,14 @@ public class ResultsRecycleAdapter
             super(itemView);
 
             title = itemView.findViewById(R.id.title_tv);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            Log.d(TAG,"*****Item clicked" + data.get(getAdapterPosition()).getWebUrl());
+            callbacks.onListItemSelected(getAdapterPosition());
+
         }
     }
 }

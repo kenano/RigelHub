@@ -11,13 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.kenanozdamar.android.demo.rigelhub.MainCallbacks;
 import com.kenanozdamar.android.demo.rigelhub.R;
 import com.kenanozdamar.android.demo.rigelhub.search_results.SearchResultsPresenter;
 import com.kenanozdamar.android.demo.rigelhub.search_results.SearchResultsView;
 import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResults;
 import com.kenanozdamar.android.demo.rigelhub.search_results.recycle_adapters.ResultsRecycleAdapter;
 
-public class SearchResultsFragment extends Fragment implements SearchResultsView {
+public class SearchResultsFragment extends Fragment implements SearchResultsView, FragmentCallbacks {
 
     // region TAG.
     @SuppressWarnings("unused")
@@ -25,7 +26,7 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     // endregion
 
     // region constants
-    private static final String ARGUMENT_QUERY = "ARGUMENTS_QUERY";
+    private static final String ARGUMENT_QUERY = "ARGUMENT_QUERY";
     // endregion
 
     // region ivar(s)
@@ -33,22 +34,6 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     private RecyclerView recyclerView;
     private SearchResultsPresenter presenter;
     private String query;
-    // endregion
-
-    // region SearchResultsView overrides
-    @Override
-    public void onError(Throwable exc) {
-        Log.w(TAG, exc.getMessage());
-    }
-
-    @Override
-    public void showResults(SearchResults results) {
-        Log.d(TAG, results.toString());
-        adapter.setData(results.getSearchResults());
-        adapter.notifyDataSetChanged();
-//        recyclerView.notify();
-
-    }
     // endregion
 
     // region fragment generator
@@ -67,6 +52,7 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
         super.onCreate(savedInstanceState);
         presenter = new SearchResultsPresenter();
         adapter = new ResultsRecycleAdapter(getContext());
+        adapter.register(this);
     }
 
     @Nullable
@@ -112,4 +98,23 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     }
     // endregion
 
+    // region SearchResultsView overrides
+    @Override
+    public void onError(Throwable exc) {
+        Log.w(TAG, exc.getMessage());
+    }
+
+    @Override
+    public void showResults(SearchResults results) {
+        Log.d(TAG, results.toString());
+        adapter.setData(results.getSearchResults());
+        adapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void onListItemSelected(int position) {
+        ((MainCallbacks) getActivity()).displayWeb(adapter.getDataItem(position).getWebUrl());
+    }
+    // endregion
 }
