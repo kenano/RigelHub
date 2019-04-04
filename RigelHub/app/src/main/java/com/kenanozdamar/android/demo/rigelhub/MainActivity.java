@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -24,14 +25,18 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
     // region ivar(s)
     SearchView searchView;
+    Toolbar toolbar;
     // endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().back
+//        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     // endregion
@@ -51,6 +56,15 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     // region MainCallbacks overrides
     @Override
     public void displayWeb(String url) {
@@ -64,13 +78,13 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     private void displaySearchResultsFragment(String searchQuery) {
         Log.d(TAG, "Displaying search results fragment.");
         SearchResultsFragment searchResultsFragment = SearchResultsFragment.newInstance(searchQuery);
-        pushStateless(R.id.main_frame, searchResultsFragment, null, false);
+        pushStateless(R.id.main_frame, searchResultsFragment, SearchResultsFragment.class.getSimpleName(), true);
 
     }
 
     private void displayWebFragment(@NonNull String url) {
         WebFragment webFragment = WebFragment.newInstance(url);
-        pushStateless(R.id.main_frame, webFragment, null, false);
+        pushStateless(R.id.main_frame, webFragment, WebFragment.class.getSimpleName(), true);
     }
     // endregion
 
@@ -112,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "Query submitted.");
-                searchView.clearFocus();
+                resetSearchView();
                 displaySearchResultsFragment(query);
                 return true;
             }
@@ -122,6 +136,13 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
                 return false;
             }
         };
+    }
+
+    private void resetSearchView() {
+        searchView.setQuery("", false);
+        searchView.setIconified(true);
+        searchView.clearFocus();
+        toolbar.collapseActionView();
     }
     // endregion
 }
