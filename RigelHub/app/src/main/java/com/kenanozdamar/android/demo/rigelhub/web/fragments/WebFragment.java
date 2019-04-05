@@ -55,7 +55,18 @@ public class WebFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        webView.loadUrl(url);
+
+        if (savedInstanceState == null) {
+            webView.loadUrl(url);
+        } else {
+            webView.restoreState(savedInstanceState);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        webView.saveState(outState);
     }
     // endregion
 

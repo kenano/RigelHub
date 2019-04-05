@@ -81,11 +81,6 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-//        presenter.request(query);
-    }
 
     @Override
     public void onDestroyView() {
