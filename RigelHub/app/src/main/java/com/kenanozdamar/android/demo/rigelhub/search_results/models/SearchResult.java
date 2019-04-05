@@ -1,6 +1,8 @@
 package com.kenanozdamar.android.demo.rigelhub.search_results.models;
 
-public class SearchResult {
+import java.io.Serializable;
+
+public class SearchResult implements Serializable {
 
     // region ivar(s)
     private String repositoryName;

@@ -46,6 +46,10 @@ public class ResultsRecycleAdapter
         data.addAll(items);
     }
 
+    public List<SearchResult> getData() {
+        return data;
+    }
+
     public SearchResult getDataItem(int position) {
         return data.get(position);
     }

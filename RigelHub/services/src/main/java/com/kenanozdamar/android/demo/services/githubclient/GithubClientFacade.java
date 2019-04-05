@@ -44,7 +44,7 @@ public class GithubClientFacade {
                         (searchResults) -> onNext(searchResults, listener),
                         (error) -> onError(error, listener)
         );
-        compositeDisposable.add(disposable);
+//        compositeDisposable.add(disposable);
     }
     // endregion
 
@@ -84,13 +84,13 @@ public class GithubClientFacade {
         if (listener != null) {
             listener.onUpdate(results);
         }
-        compositeDisposable.dispose();
+//        compositeDisposable.dispose();
     }
 
     private void onError(Throwable ex, ClientCallback listener) {
         if (listener != null) {
             listener.onError(ex);
         }
-        compositeDisposable.dispose();
+//        compositeDisposable.dispose();
     }
 }

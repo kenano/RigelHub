@@ -56,14 +56,14 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case android.R.id.home:
+//                onBackPressed();
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     // region MainCallbacks overrides
     @Override

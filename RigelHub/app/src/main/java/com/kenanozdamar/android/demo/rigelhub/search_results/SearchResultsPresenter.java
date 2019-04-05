@@ -38,6 +38,10 @@ public class SearchResultsPresenter {
         this.view = view;
     }
 
+    public void unregister() {
+        view = null;
+    }
+
 
     public void request(String query) {
         GithubClientFacade client = serviceFacade.getGithubClientFacade();
@@ -58,7 +62,8 @@ public class SearchResultsPresenter {
     // region business logic helpers
     private SearchResults createSearchResults(ClientResults apiResults) {
         List<SearchResult> resultList = new ArrayList<>();
-        List<Item> topList = apiResults.getItems().subList(0, MAX_DISPLAY_COUNT);
+        List<Item> topList = apiResults.getItems()
+                .subList(0, (apiResults.getItems().size() >= MAX_DISPLAY_COUNT) ? MAX_DISPLAY_COUNT : apiResults.getItems().size());
         for (Item apiResult : topList) {
             SearchResult result = new SearchResult();
             result.setRepositoryName(apiResult.getName());

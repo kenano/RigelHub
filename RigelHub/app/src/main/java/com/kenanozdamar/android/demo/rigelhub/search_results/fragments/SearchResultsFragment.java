@@ -15,8 +15,11 @@ import com.kenanozdamar.android.demo.rigelhub.MainCallbacks;
 import com.kenanozdamar.android.demo.rigelhub.R;
 import com.kenanozdamar.android.demo.rigelhub.search_results.SearchResultsPresenter;
 import com.kenanozdamar.android.demo.rigelhub.search_results.SearchResultsView;
+import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResult;
 import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResults;
 import com.kenanozdamar.android.demo.rigelhub.search_results.recycle_adapters.ResultsRecycleAdapter;
+
+import java.util.ArrayList;
 
 public class SearchResultsFragment extends Fragment implements SearchResultsView, FragmentCallbacks {
 
@@ -70,7 +73,31 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         presenter.register(this);
-        presenter.request(query);
+
+        if (savedInstanceState == null) {
+            presenter.request(query);
+        } else {
+            adapter.setData((ArrayList<SearchResult>) savedInstanceState.getSerializable("LIST"));
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        presenter.request(query);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        presenter.unregister();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "Save instance state");
+        outState.putSerializable("LIST", (ArrayList<SearchResult>) adapter.getData());
     }
 
     // endregion.
