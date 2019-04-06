@@ -18,6 +18,7 @@ import android.view.MenuItem;
 
 import com.kenanozdamar.android.demo.rigelhub.search_results.fragments.SearchResultsFragment;
 import com.kenanozdamar.android.demo.rigelhub.web.fragments.WebFragment;
+import com.kenanozdamar.android.demo.rigelhub.welcome.fragments.WelcomeFragment;
 
 public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
@@ -28,18 +29,20 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     Toolbar toolbar;
     // endregion
 
+    // region Activity overrides
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        if (savedInstanceState == null) displayWelcomeFragment();
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        getSupportActionBar().back
 //        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
-    // endregion
 
 
     @Override
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
         return super.onCreateOptionsMenu(menu);
     }
+    // endregion
 
 //    @Override
 //    public boolean onOptionsItemSelected(MenuItem item) {
@@ -75,6 +79,13 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     // endregion
 
     // region fragment navigation
+    private void displayWelcomeFragment() {
+        Log.d(TAG, "Displaying welcome fragment.");
+        WelcomeFragment welcomeFragment = WelcomeFragment.newInstance();
+        pushStateless(R.id.main_frame, welcomeFragment, WelcomeFragment.class.getSimpleName(), false);
+
+    }
+
     private void displaySearchResultsFragment(String searchQuery) {
         Log.d(TAG, "Displaying search results fragment.");
         SearchResultsFragment searchResultsFragment = SearchResultsFragment.newInstance(searchQuery);
