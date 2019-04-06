@@ -1,5 +1,6 @@
 package com.kenanozdamar.android.demo.rigelhub.web.fragments;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.kenanozdamar.android.demo.rigelhub.R;
+import com.kenanozdamar.android.demo.rigelhub.web.client.AppWebViewClient;
 
 public class WebFragment extends Fragment {
 
@@ -26,6 +29,7 @@ public class WebFragment extends Fragment {
     // region ivar(s)
     private WebView webView;
     private String url;
+    private View progressSpinner;
     // endregion
 
     // region fragment generator
@@ -48,6 +52,8 @@ public class WebFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.web_fragment, container, false);
         webView = rootView.findViewById(R.id.web_view);
+        progressSpinner = rootView.findViewById(R.id.progress_spinner);
+        webView.setWebViewClient(new AppWebViewClient(progressSpinner));
         getFragmentArguments();
         return rootView;
     }
@@ -55,6 +61,7 @@ public class WebFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        progressSpinner.setVisibility(View.VISIBLE);
 
         if (savedInstanceState == null) {
             webView.loadUrl(url);
