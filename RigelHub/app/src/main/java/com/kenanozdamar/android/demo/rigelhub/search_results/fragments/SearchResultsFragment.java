@@ -13,11 +13,14 @@ import android.view.ViewGroup;
 
 import com.kenanozdamar.android.demo.rigelhub.MainCallbacks;
 import com.kenanozdamar.android.demo.rigelhub.R;
+import com.kenanozdamar.android.demo.rigelhub.dialogs.AlertDialogManager;
+import com.kenanozdamar.android.demo.rigelhub.error.ErrorType;
 import com.kenanozdamar.android.demo.rigelhub.search_results.SearchResultsPresenter;
 import com.kenanozdamar.android.demo.rigelhub.search_results.SearchResultsView;
 import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResult;
 import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResults;
 import com.kenanozdamar.android.demo.rigelhub.search_results.recycle_adapters.ResultsRecycleAdapter;
+import com.kenanozdamar.android.demo.services.network.exceptions.NetworkException;
 
 import java.util.ArrayList;
 
@@ -123,7 +126,13 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     // region SearchResultsView overrides
     @Override
     public void onError(Throwable exc) {
-        Log.w(TAG, exc.getMessage());
+        if (exc instanceof NetworkException) {
+            NetworkException networkException = (NetworkException) exc;
+            if (networkException.getCode() == 422) {
+                AlertDialogManager.displayErrorAlert(getContext(), ErrorType.EmptySearchResult);
+
+            }
+        }
     }
 
     @Override

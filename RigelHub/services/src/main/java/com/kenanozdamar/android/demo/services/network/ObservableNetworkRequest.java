@@ -4,9 +4,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+
+import com.kenanozdamar.android.demo.services.network.exceptions.NetworkException;
+
+import org.reactivestreams.Subscriber;
+
 import java.net.SocketTimeoutException;
 
 import io.reactivex.Observable;
+
+import io.reactivex.ObservableEmitter;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -31,12 +38,15 @@ public class ObservableNetworkRequest {
 
     // region makeRequest
     private Observable<String> makeRequest(@NonNull Request request) {
-        return Observable.create((observer) -> {
+        return Observable.create((emitter) -> {
             final OkHttpClient client = OkHttpClientFactory.genClient();
                     try {
                         final Response response = client.newCall(request).execute();
                         if (!response.isSuccessful()) {
-                            handleError(response.message());
+                            final String msg = response.message();
+                            final int code = response.code();
+                            final String url = request.url().toString();
+                            handleError(emitter, url, code, msg, null);
                             response.close();
                             return;
                         }
@@ -47,7 +57,7 @@ public class ObservableNetworkRequest {
                         Log.d(TAG, "Headers: " + response.headers().toString());
 
                         if (body == null) {
-                            handleError(response.message());
+//                            handleError(response.message());
                             response.close();
                             return;
                         }
@@ -57,22 +67,44 @@ public class ObservableNetworkRequest {
                         }
 
                         final String contents = body.string();
-                        observer.onNext(contents);
-                        observer.onComplete();
+                        emitter.onNext(contents);
+                        emitter.onComplete();
 
                     } catch (SocketTimeoutException ex) {
-                        handleError("SocketTimeout Exception");
+//                        handleError("SocketTimeout Exception");
                     } catch (Throwable throwable) {
-                        handleError(throwable.getMessage());
+//                        handleError(throwable.getMessage());
                     }
         });
     }
     // endregion
 
     // region error handling.
-    private void handleError(String s) {
-        Log.e(TAG, "There was a network error: " + s);
+    private void handleError(@NonNull ObservableEmitter emitter,
+                             @NonNull String url,
+                             @NonNull Integer networkCode,
+                             @NonNull String networkMsg,
+                             @Nullable Throwable exc) {
+
+        Log.w(TAG, "Request to url < "
+                + url
+                + " > failed with code: < "
+                + networkCode
+                + " > and message < "
+                + networkMsg
+                + " >"
+        );
+
+        emitter.onError(
+                new NetworkException(
+                        url,
+                        networkCode,
+                        networkMsg,
+                        exc
+                )
+        );
     }
+}
     // endregion
 
-}
+
