@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.kenanozdamar.android.demo.rigelhub.MainCallbacks;
 import com.kenanozdamar.android.demo.rigelhub.R;
@@ -21,6 +23,8 @@ import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResult
 import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResults;
 import com.kenanozdamar.android.demo.rigelhub.search_results.recycle_adapters.ResultsRecycleAdapter;
 import com.kenanozdamar.android.demo.services.network.exceptions.NetworkException;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -38,6 +42,8 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     // region ivar(s)
     private ResultsRecycleAdapter adapter;
     private RecyclerView recyclerView;
+    private ImageView avatarImg;
+    private TextView orgName;
     private SearchResultsPresenter presenter;
     private String query;
     // endregion
@@ -67,6 +73,8 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.search_results_fragment, container, false);
+        avatarImg = rootView.findViewById(R.id.image_view_org_avatar);
+        orgName = rootView.findViewById(R.id.text_view_org_name);
         setupRecyclerView(rootView);
         getFragmentArguments();
         return rootView;
@@ -138,9 +146,24 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     @Override
     public void showResults(SearchResults results) {
         Log.d(TAG, results.toString());
+        SearchResult firstResult = results.getSearchResults().get(0);
         adapter.setData(results.getSearchResults());
-        adapter.notifyDataSetChanged();
+        // todo what if results size is 0?
+        Picasso.get()
+                .load(firstResult.getAvatarUrl())
+                .into(avatarImg, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        orgName.setText(firstResult.getOrgName());
+                        adapter.notifyDataSetChanged();
+                    }
 
+                    @Override
+                    public void onError(Exception e) {
+                        orgName.setText(firstResult.getOrgName());
+                        adapter.notifyDataSetChanged();
+                    }
+                });
     }
 
     @Override

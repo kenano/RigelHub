@@ -15,6 +15,9 @@ public class Item {
 
     @JsonProperty("stargazers_count")
     private String stargazersCount;
+
+    @JsonProperty
+    private Owner owner;
     // endregion
 
 
@@ -40,5 +43,13 @@ public class Item {
 
     public void setStargazersCount(String stargazersCount) {
         this.stargazersCount = stargazersCount;
+    }
+
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
 }

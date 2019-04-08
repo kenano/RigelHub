@@ -5,7 +5,7 @@ import java.util.List;
 
 public class SearchResults {
 
-    // region ivars
+    // region ivar(s)
     private List<SearchResult> searchResults = new ArrayList<>();
     // endregion
 

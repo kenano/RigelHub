@@ -24,11 +24,6 @@ public class ResultsRecycleAdapter
     private static final String TAG = ResultsRecycleAdapter.class.getSimpleName();
     // endregion
 
-//    String[] categories = {"Cat 1", "Cat 2", "Cat 3", "Cat 4" ,"Cat 5" ,"Cat 6","Cat 7",
-//            "Dog 1","Dog 2","Dog 3","Dog 4","Dog 5",
-//            "Deer 1","Deer 2","Deer 3","Deer 4",
-//            " Parrot 1"," Parrot 2"," Parrot 3"," Parrot 4"," Parrot 5"," Parrot 6"," Parrot 7"," Parrot 8"};
-
     private List<SearchResult> data = new ArrayList<>();
     private Context context;
     private FragmentCallbacks callbacks;

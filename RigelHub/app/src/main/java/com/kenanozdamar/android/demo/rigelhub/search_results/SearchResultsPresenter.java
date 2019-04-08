@@ -53,6 +53,7 @@ public class SearchResultsPresenter {
             @Override
             public void onUpdate(ClientResults results) {
                 Log.d(TAG, results.toString());
+                if (view ==  null) return;
                 view.showResults(createSearchResults(results));
             }
 
@@ -71,8 +72,10 @@ public class SearchResultsPresenter {
         for (Item apiResult : topList) {
             SearchResult result = new SearchResult();
             result.setRepositoryName(apiResult.getName());
+            result.setOrgName(apiResult.getOwner().getOrgName());
             result.setStarCount(Integer.parseInt(apiResult.getStargazersCount()));
             result.setWebUrl(apiResult.getUrl());
+            result.setAvatarUrl(apiResult.getOwner().getAvatarUrl());
             resultList.add(result);
         }
         SearchResults searchResults = new SearchResults();
