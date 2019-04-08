@@ -76,6 +76,7 @@ public class SearchResultsPresenter {
             result.setStarCount(Integer.parseInt(apiResult.getStargazersCount()));
             result.setWebUrl(apiResult.getUrl());
             result.setAvatarUrl(apiResult.getOwner().getAvatarUrl());
+            result.setDescription(apiResult.getDescription());
             resultList.add(result);
         }
         SearchResults searchResults = new SearchResults();

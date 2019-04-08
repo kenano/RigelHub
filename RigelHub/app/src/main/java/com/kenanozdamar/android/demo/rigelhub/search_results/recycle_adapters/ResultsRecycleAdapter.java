@@ -58,7 +58,11 @@ public class ResultsRecycleAdapter
 
     @Override
     public void onBindViewHolder(@NonNull ResultViewHolder viewHolder, int position) {
-        viewHolder.title.setText(data.get(position).getRepositoryName());
+        SearchResult result = data.get(position);
+        if (result ==  null) return;
+        viewHolder.title.setText(result.getRepositoryName());
+        viewHolder.starCount.setText(String.valueOf(result.getStarCount()));
+        viewHolder.description.setText(result.getDescription());
     }
 
     @Override
@@ -69,11 +73,16 @@ public class ResultsRecycleAdapter
     class ResultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView title;
+        TextView description;
+        TextView starCount;
 
         public ResultViewHolder(@NonNull View itemView) {
             super(itemView);
 
             title = itemView.findViewById(R.id.title_tv);
+            description = itemView.findViewById(R.id.repo_description_tv);
+            starCount = itemView.findViewById(R.id.star_count_tv);
+
             itemView.setOnClickListener(this);
         }
 

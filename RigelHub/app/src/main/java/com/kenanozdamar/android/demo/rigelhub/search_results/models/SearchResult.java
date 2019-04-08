@@ -9,6 +9,7 @@ public class SearchResult implements Serializable {
     private String orgName;
     private String webUrl;
     private String avatarUrl;
+    private String description;
     private int starCount = 0;
     // endregion
 
@@ -54,6 +55,14 @@ public class SearchResult implements Serializable {
         this.orgName = orgName;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     // endregion
 
     // region Object overrides
@@ -64,6 +73,7 @@ public class SearchResult implements Serializable {
                 "orgName=" + orgName +
                 ", webUrl=" + webUrl +
                 ", avatarUrl=" + avatarUrl +
+                ", description=" + description +
                 ", starCount=" + starCount + '\'' +
                 '}' + super.toString();
     }
