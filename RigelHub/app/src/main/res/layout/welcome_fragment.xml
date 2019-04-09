@@ -8,9 +8,11 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textSize="30dp"
+        android:textSize="25sp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:textAlignment="center"
         android:gravity="center"
-        android:text="Welcome" />
+        android:text="@string/welcome_prompt" />
 
 </LinearLayout>

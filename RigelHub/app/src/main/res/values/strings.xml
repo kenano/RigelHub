@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">RigelHub</string>
 
+    <!-- Welcome Fragment -->
+    <string name="welcome_prompt">RigelHub searches for the brightest stars on Github. Enter an organization above to search for.</string>
+
     <!-- Error Dialogs -->
     <string name="ok">OK</string>
     <!-- Empty Search Results -->
