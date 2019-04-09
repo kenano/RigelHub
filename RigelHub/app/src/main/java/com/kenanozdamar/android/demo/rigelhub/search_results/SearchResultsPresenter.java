@@ -2,9 +2,6 @@ package com.kenanozdamar.android.demo.rigelhub.search_results;
 
 import android.util.Log;
 
-import com.kenanozdamar.android.demo.rigelhub.R;
-import com.kenanozdamar.android.demo.rigelhub.dialogs.AlertDialogManager;
-import com.kenanozdamar.android.demo.rigelhub.error.ErrorType;
 import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResult;
 import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResults;
 import com.kenanozdamar.android.demo.services.ServicesFacade;
@@ -12,7 +9,6 @@ import com.kenanozdamar.android.demo.services.githubclient.ClientCallback;
 import com.kenanozdamar.android.demo.services.githubclient.GithubClientFacade;
 import com.kenanozdamar.android.demo.services.githubclient.models.ClientResults;
 import com.kenanozdamar.android.demo.services.githubclient.models.Item;
-import com.kenanozdamar.android.demo.services.network.exceptions.NetworkException;
 
 import java.util.ArrayList;
 import java.util.List;
