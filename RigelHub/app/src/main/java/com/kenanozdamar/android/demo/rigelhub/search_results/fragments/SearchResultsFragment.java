@@ -37,6 +37,9 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
 
     // region constants
     private static final String ARGUMENT_QUERY = "ARGUMENT_QUERY";
+    private static final String SAVE_STATE_AVATAR_URL = "AVATAR_URL";
+    private static final String SAVE_STATE_ORG_NAME = "ORG_NAME";
+    private static final String SAVE_STATE_DATA_LIST = "DATA_LIST";
     // endregion
 
     // region ivar(s)
@@ -88,7 +91,9 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
         if (savedInstanceState == null) {
             presenter.request(query);
         } else {
-            adapter.setData((ArrayList<SearchResult>) savedInstanceState.getSerializable("LIST"));
+            adapter.setData((ArrayList<SearchResult>) savedInstanceState.getSerializable(SAVE_STATE_DATA_LIST));
+            loadImage(savedInstanceState.getString(SAVE_STATE_AVATAR_URL),
+                    imgLoadListener(savedInstanceState.getString(SAVE_STATE_ORG_NAME)));
         }
     }
 
@@ -103,7 +108,10 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d(TAG, "Save instance state");
-        outState.putSerializable("LIST", (ArrayList<SearchResult>) adapter.getData());
+        SearchResult firstResult = adapter.getDataItem(0);
+        outState.putString(SAVE_STATE_AVATAR_URL, firstResult.getAvatarUrl());
+        outState.putString(SAVE_STATE_ORG_NAME, firstResult.getOrgName());
+        outState.putSerializable(SAVE_STATE_DATA_LIST, (ArrayList<SearchResult>) adapter.getData());
     }
 
     // endregion.
@@ -129,6 +137,30 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
         }
         query = args.getString(ARGUMENT_QUERY);
     }
+
+    private void loadImage(String url, Callback callback) {
+        Picasso.get()
+                .load(url)
+                .into(avatarImg, callback);
+    }
+    // endregion
+
+    // region Picasso callback
+    private Callback imgLoadListener(String name) {
+        return new Callback() {
+            @Override
+            public void onSuccess() {
+                orgName.setText(name);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                orgName.setText(name);
+                adapter.notifyDataSetChanged();
+            }
+        };
+    }
     // endregion
 
     // region SearchResultsView overrides
@@ -149,22 +181,9 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
         SearchResult firstResult = results.getSearchResults().get(0);
         adapter.setData(results.getSearchResults());
         // todo what if results size is 0?
-        Picasso.get()
-                .load(firstResult.getAvatarUrl())
-                .into(avatarImg, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        orgName.setText(firstResult.getOrgName());
-                        adapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        orgName.setText(firstResult.getOrgName());
-                        adapter.notifyDataSetChanged();
-                    }
-                });
+        loadImage(firstResult.getAvatarUrl(), imgLoadListener(firstResult.getOrgName()));
     }
+
 
     @Override
     public void onListItemSelected(int position) {
