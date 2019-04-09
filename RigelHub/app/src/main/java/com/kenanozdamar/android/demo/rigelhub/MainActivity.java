@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -15,18 +14,27 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.kenanozdamar.android.demo.rigelhub.dialogs.AlertDialogManager;
+import com.kenanozdamar.android.demo.rigelhub.error.ErrorType;
+import com.kenanozdamar.android.demo.rigelhub.presenters.SearchPresenter;
+import com.kenanozdamar.android.demo.rigelhub.search_results.SearchResultsView;
 import com.kenanozdamar.android.demo.rigelhub.search_results.fragments.SearchResultsFragment;
+import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResults;
 import com.kenanozdamar.android.demo.rigelhub.web.fragments.WebFragment;
 import com.kenanozdamar.android.demo.rigelhub.welcome.fragments.WelcomeFragment;
+import com.kenanozdamar.android.demo.services.network.exceptions.NetworkException;
 
-public class MainActivity extends AppCompatActivity implements MainCallbacks {
+public class MainActivity extends AppCompatActivity implements MainCallbacks, SearchResultsView {
 
     private static final String TAG = MainActivity.class.getName();
 
     // region ivar(s)
-    SearchView searchView;
-    Toolbar toolbar;
+    private SearchView searchView;
+    private Toolbar toolbar;
+    private SearchPresenter presenter;
+    private View progressSpinner;
     // endregion
 
     // region Activity overrides
@@ -35,15 +43,18 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
+        progressSpinner = findViewById(R.id.progress_spinner);
         setSupportActionBar(toolbar);
-
+        presenter = new SearchPresenter();
+        presenter.register(this);
         if (savedInstanceState == null) displayWelcomeFragment();
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().back
-//        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.unregister();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -59,15 +70,6 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         return super.onCreateOptionsMenu(menu);
     }
     // endregion
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case android.R.id.home:
-//                onBackPressed();
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
     // region MainCallbacks overrides
     @Override
@@ -86,9 +88,9 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
 
     }
 
-    private void displaySearchResultsFragment(String searchQuery) {
+    private void displaySearchResultsFragment(SearchResults searchResults) {
         Log.d(TAG, "Displaying search results fragment.");
-        SearchResultsFragment searchResultsFragment = SearchResultsFragment.newInstance(searchQuery);
+        SearchResultsFragment searchResultsFragment = SearchResultsFragment.newInstance(searchResults);
         pushStateless(R.id.main_frame, searchResultsFragment, SearchResultsFragment.class.getSimpleName(), true);
 
     }
@@ -138,7 +140,8 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "Query submitted.");
                 resetSearchView();
-                displaySearchResultsFragment(query);
+                progressSpinner.setVisibility(View.VISIBLE);
+                presenter.request(query);
                 return true;
             }
 
@@ -154,6 +157,27 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
         searchView.setIconified(true);
         searchView.clearFocus();
         toolbar.collapseActionView();
+    }
+    // endregion
+
+    // region SearchResultsView overrides
+    @Override
+    public void onError(Throwable exc) {
+        progressSpinner.setVisibility(View.GONE);
+        if (exc instanceof NetworkException) {
+            NetworkException networkException = (NetworkException) exc;
+            if (networkException.getCode() == 422) {
+                AlertDialogManager.displayErrorAlert(this, ErrorType.EmptySearchResult);
+
+            }
+        }
+    }
+
+    @Override
+    public void showResults(SearchResults results) {
+        Log.d(TAG, results.toString());
+        progressSpinner.setVisibility(View.GONE);
+        if( results != null && results.getSearchResults().size() > 0) displaySearchResultsFragment(results);
     }
     // endregion
 }

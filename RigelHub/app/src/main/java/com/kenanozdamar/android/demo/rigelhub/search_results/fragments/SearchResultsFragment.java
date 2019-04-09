@@ -15,20 +15,16 @@ import android.widget.TextView;
 
 import com.kenanozdamar.android.demo.rigelhub.MainCallbacks;
 import com.kenanozdamar.android.demo.rigelhub.R;
-import com.kenanozdamar.android.demo.rigelhub.dialogs.AlertDialogManager;
-import com.kenanozdamar.android.demo.rigelhub.error.ErrorType;
-import com.kenanozdamar.android.demo.rigelhub.search_results.SearchResultsPresenter;
-import com.kenanozdamar.android.demo.rigelhub.search_results.SearchResultsView;
 import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResult;
 import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResults;
 import com.kenanozdamar.android.demo.rigelhub.search_results.recycle_adapters.ResultsRecycleAdapter;
-import com.kenanozdamar.android.demo.services.network.exceptions.NetworkException;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class SearchResultsFragment extends Fragment implements SearchResultsView, FragmentCallbacks {
+public class SearchResultsFragment extends Fragment implements FragmentCallbacks {
 
     // region TAG.
     @SuppressWarnings("unused")
@@ -36,7 +32,7 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     // endregion
 
     // region constants
-    private static final String ARGUMENT_QUERY = "ARGUMENT_QUERY";
+    private static final String ARGUMENT_SEARCH_RESULTS = "ARGUMENT_QUERY";
     private static final String SAVE_STATE_AVATAR_URL = "AVATAR_URL";
     private static final String SAVE_STATE_ORG_NAME = "ORG_NAME";
     private static final String SAVE_STATE_DATA_LIST = "DATA_LIST";
@@ -47,15 +43,15 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     private RecyclerView recyclerView;
     private ImageView avatarImg;
     private TextView orgName;
-    private SearchResultsPresenter presenter;
-    private String query;
+    //    private SearchPresenter presenter;
+    private SearchResults searchResults;
     // endregion
 
     // region fragment generator
-    public static SearchResultsFragment newInstance(@NonNull String searchQuery){
+    public static SearchResultsFragment newInstance(@NonNull SearchResults searchResults) {
         SearchResultsFragment fragment = new SearchResultsFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(ARGUMENT_QUERY, searchQuery);
+        bundle.putSerializable(ARGUMENT_SEARCH_RESULTS, searchResults);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -65,7 +61,7 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new SearchResultsPresenter();
+//        presenter = new SearchPresenter();
         adapter = new ResultsRecycleAdapter(getContext());
         adapter.register(this);
     }
@@ -86,10 +82,13 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        presenter.register(this);
+//        presenter.register(this);
 
         if (savedInstanceState == null) {
-            presenter.request(query);
+            List<SearchResult> resultList = searchResults.getSearchResults();
+            SearchResult firstResult = resultList.get(0);
+            adapter.setData(resultList);
+            loadImage(firstResult.getAvatarUrl(), imgLoadListener(firstResult.getOrgName()));
         } else {
             adapter.setData((ArrayList<SearchResult>) savedInstanceState.getSerializable(SAVE_STATE_DATA_LIST));
             loadImage(savedInstanceState.getString(SAVE_STATE_AVATAR_URL),
@@ -101,7 +100,7 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        presenter.unregister();
+//        presenter.unregister();
     }
 
     @Override
@@ -131,11 +130,12 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
             return;
         }
 
-        if (!(args.containsKey(ARGUMENT_QUERY))) {
+        if (!(args.containsKey(ARGUMENT_SEARCH_RESULTS))) {
             Log.w(TAG, "correct argument not in bundle.");
             return;
         }
-        query = args.getString(ARGUMENT_QUERY);
+
+        searchResults = (SearchResults) args.getSerializable(ARGUMENT_SEARCH_RESULTS);
     }
 
     private void loadImage(String url, Callback callback) {
@@ -163,28 +163,29 @@ public class SearchResultsFragment extends Fragment implements SearchResultsView
     }
     // endregion
 
-    // region SearchResultsView overrides
-    @Override
-    public void onError(Throwable exc) {
-        if (exc instanceof NetworkException) {
-            NetworkException networkException = (NetworkException) exc;
-            if (networkException.getCode() == 422) {
-                AlertDialogManager.displayErrorAlert(getContext(), ErrorType.EmptySearchResult);
+//    // region SearchResultsView overrides
+//    @Override
+//    public void onError(Throwable exc) {
+//        if (exc instanceof NetworkException) {
+//            NetworkException networkException = (NetworkException) exc;
+//            if (networkException.getCode() == 422) {
+//                AlertDialogManager.displayErrorAlert(getContext(), ErrorType.EmptySearchResult);
+//
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public void showResults(SearchResults results) {
+//        Log.d(TAG, results.toString());
+//        SearchResult firstResult = results.getSearchResults().get(0);
+//        adapter.setData(results.getSearchResults());
+//        // todo what if results size is 0?
+//        loadImage(firstResult.getAvatarUrl(), imgLoadListener(firstResult.getOrgName()));
+//    }
 
-            }
-        }
-    }
 
-    @Override
-    public void showResults(SearchResults results) {
-        Log.d(TAG, results.toString());
-        SearchResult firstResult = results.getSearchResults().get(0);
-        adapter.setData(results.getSearchResults());
-        // todo what if results size is 0?
-        loadImage(firstResult.getAvatarUrl(), imgLoadListener(firstResult.getOrgName()));
-    }
-
-
+    // region fragment callback overrides
     @Override
     public void onListItemSelected(int position) {
         ((MainCallbacks) getActivity()).displayWeb(adapter.getDataItem(position).getWebUrl());

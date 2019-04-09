@@ -1,7 +1,8 @@
-package com.kenanozdamar.android.demo.rigelhub.search_results;
+package com.kenanozdamar.android.demo.rigelhub.presenters;
 
 import android.util.Log;
 
+import com.kenanozdamar.android.demo.rigelhub.search_results.SearchResultsView;
 import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResult;
 import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResults;
 import com.kenanozdamar.android.demo.services.ServicesFacade;
@@ -13,11 +14,11 @@ import com.kenanozdamar.android.demo.services.githubclient.models.Item;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchResultsPresenter {
+public class SearchPresenter {
 
     // region TAG.
     @SuppressWarnings("unused")
-    private static final String TAG = SearchResultsPresenter.class.getSimpleName();
+    private static final String TAG = SearchPresenter.class.getSimpleName();
     // endregion
 
     // region constants
@@ -30,7 +31,7 @@ public class SearchResultsPresenter {
     //endregion
 
 
-    public SearchResultsPresenter() {
+    public SearchPresenter() {
         serviceFacade = ServicesFacade.getServiceFacade();
     }
 
