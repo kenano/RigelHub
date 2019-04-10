@@ -2,6 +2,7 @@ package com.kenanozdamar.android.demo.rigelhub.presenters;
 
 import android.util.Log;
 
+import com.kenanozdamar.android.demo.rigelhub.StringUtil;
 import com.kenanozdamar.android.demo.rigelhub.search_results.SearchResultsView;
 import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResult;
 import com.kenanozdamar.android.demo.rigelhub.search_results.models.SearchResults;
@@ -10,6 +11,7 @@ import com.kenanozdamar.android.demo.services.githubclient.ClientCallback;
 import com.kenanozdamar.android.demo.services.githubclient.GithubClientFacade;
 import com.kenanozdamar.android.demo.services.githubclient.models.ClientResults;
 import com.kenanozdamar.android.demo.services.githubclient.models.Item;
+import com.kenanozdamar.android.demo.services.githubclient.models.Owner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +32,13 @@ public class SearchPresenter {
     SearchResultsView view;
     //endregion
 
-
+    // region constructor
     public SearchPresenter() {
         serviceFacade = ServicesFacade.getServiceFacade();
     }
+    // endregion
 
+    // region public methods
     public void register(SearchResultsView view) {
         this.view = view;
     }
@@ -42,7 +46,6 @@ public class SearchPresenter {
     public void unregister() {
         view = null;
     }
-
 
     public void request(String query) {
         GithubClientFacade client = serviceFacade.getGithubClientFacade();
@@ -60,21 +63,40 @@ public class SearchPresenter {
             }
         });
     }
+    // endregion
 
-    // region business logic helpers
-    private SearchResults createSearchResults(ClientResults apiResults) {
+    // region static method(s)
+    public static SearchResults createSearchResults(ClientResults apiResults) {
         List<SearchResult> resultList = new ArrayList<>();
+        if (apiResults ==  null) return null;
         List<Item> topList = apiResults.getItems()
                 .subList(0, (apiResults.getItems().size() >= MAX_DISPLAY_COUNT) ? MAX_DISPLAY_COUNT : apiResults.getItems().size());
         for (Item apiResult : topList) {
+
+            if (apiResult.getOwner() == null ||
+                    apiResult.getDescription().isEmpty() ||
+                    StringUtil.isEmpty(apiResult.getName()) ||
+                    StringUtil.isEmpty(apiResult.getUrl()) ||
+                    StringUtil.isEmpty(apiResult.getDescription()) ||
+                    StringUtil.isEmpty(apiResult.getStargazersCount())) continue;
+
+            Owner owner = apiResult.getOwner();
+            if (StringUtil.isEmpty(owner.getAvatarUrl()) ||
+                    StringUtil.isEmpty(owner.getOrgName())) continue;
+
             SearchResult result = new SearchResult();
             result.setRepositoryName(apiResult.getName());
-            result.setOrgName(apiResult.getOwner().getOrgName());
-            result.setStarCount(Integer.parseInt(apiResult.getStargazersCount()));
+            result.setOrgName(owner.getOrgName());
             result.setWebUrl(apiResult.getUrl());
             result.setAvatarUrl(apiResult.getOwner().getAvatarUrl());
             result.setDescription(apiResult.getDescription());
+            try {
+                result.setStarCount(Integer.parseInt(apiResult.getStargazersCount()));
+            } catch (NullPointerException exception) {
+                continue;
+            }
             resultList.add(result);
+
         }
         SearchResults searchResults = new SearchResults();
         searchResults.setSearchResults(resultList);

@@ -177,7 +177,11 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Se
     public void showResults(SearchResults results) {
         Log.d(TAG, results.toString());
         progressSpinner.setVisibility(View.GONE);
-        if( results != null && results.getSearchResults().size() > 0) displaySearchResultsFragment(results);
+        if( results != null && results.getSearchResults().size() > 0) {
+            displaySearchResultsFragment(results);
+        } else {
+            AlertDialogManager.displayErrorAlert(this, ErrorType.EmptySearchResult);
+        }
     }
     // endregion
 }
