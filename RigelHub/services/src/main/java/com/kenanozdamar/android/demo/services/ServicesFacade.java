@@ -12,6 +12,15 @@ public class ServicesFacade {
     private static ServicesFacade serviceFacade;
     // endregion
 
+    // region constructor (private)
+    private ServicesFacade() {
+        networkFacade = new NetworkFacade(new OkHttpFetcher());
+        githubClientFacade = new GithubClientFacade();
+        githubClientFacade.setNetworkFacade(networkFacade);
+    }
+    // endregion
+
+    // region  Factory getter
     public static ServicesFacade getServiceFacade() {
         if (serviceFacade == null) {
             serviceFacade = new ServicesFacade();
@@ -19,14 +28,11 @@ public class ServicesFacade {
 
         return serviceFacade;
     }
+    // endregion
 
-    private ServicesFacade() {
-        networkFacade = new NetworkFacade(new OkHttpFetcher());
-        githubClientFacade = new GithubClientFacade();
-        githubClientFacade.setNetworkFacade(networkFacade);
-    }
-
+    // region getters
     public GithubClientFacade getGithubClientFacade() {
         return githubClientFacade;
     }
+    // endregion
 }

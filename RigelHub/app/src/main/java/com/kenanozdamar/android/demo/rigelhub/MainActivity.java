@@ -1,5 +1,6 @@
 package com.kenanozdamar.android.demo.rigelhub;
 
+import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -28,7 +28,10 @@ import com.kenanozdamar.android.demo.services.network.exceptions.NetworkExceptio
 
 public class MainActivity extends AppCompatActivity implements MainCallbacks, SearchResultsView {
 
+    // region TAG
+    @SuppressWarnings("unused")
     private static final String TAG = MainActivity.class.getName();
+    // endregion
 
     // region ivar(s)
     private SearchView searchView;
@@ -103,9 +106,9 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Se
 
     // region fragment helpers
     private void pushStateless(@IdRes int res,
-                                 @NonNull Fragment fragment,
-                                 @Nullable String tag,
-                                 @NonNull Boolean addToStack) {
+                               @NonNull Fragment fragment,
+                               @Nullable String tag,
+                               @NonNull Boolean addToStack) {
         commit(genTransition(res, fragment, tag, addToStack), true);
     }
 
@@ -131,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Se
         return transaction;
     }
     // endregion
-
 
     // region helpers
     private SearchView.OnQueryTextListener createSearchQueryListener() {
@@ -177,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Se
     public void showResults(SearchResults results) {
         Log.d(TAG, results.toString());
         progressSpinner.setVisibility(View.GONE);
-        if( results != null && results.getSearchResults().size() > 0) {
+        if (results != null && results.getSearchResults().size() > 0) {
             displaySearchResultsFragment(results);
         } else {
             AlertDialogManager.displayErrorAlert(this, ErrorType.EmptySearchResult);

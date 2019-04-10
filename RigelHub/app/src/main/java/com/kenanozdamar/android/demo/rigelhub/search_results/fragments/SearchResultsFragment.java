@@ -163,28 +163,6 @@ public class SearchResultsFragment extends Fragment implements FragmentCallbacks
     }
     // endregion
 
-//    // region SearchResultsView overrides
-//    @Override
-//    public void onError(Throwable exc) {
-//        if (exc instanceof NetworkException) {
-//            NetworkException networkException = (NetworkException) exc;
-//            if (networkException.getCode() == 422) {
-//                AlertDialogManager.displayErrorAlert(getContext(), ErrorType.EmptySearchResult);
-//
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public void showResults(SearchResults results) {
-//        Log.d(TAG, results.toString());
-//        SearchResult firstResult = results.getSearchResults().get(0);
-//        adapter.setData(results.getSearchResults());
-//        // todo what if results size is 0?
-//        loadImage(firstResult.getAvatarUrl(), imgLoadListener(firstResult.getOrgName()));
-//    }
-
-
     // region fragment callback overrides
     @Override
     public void onListItemSelected(int position) {

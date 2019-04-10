@@ -6,26 +6,35 @@ import okhttp3.OkHttpClient;
 
 public class OkHttpClientFactory {
 
-    private static final String NULL_FACTORY = "Need to generate the OKHTTP factory.";
+    // region constants
     public static final long CONNECTION_TIMEOUT_MS = 30000;
     public static final long WRITE_TIMEOUT_MS = 10000;
     public static final long READ_TIMEOUT_MS = 10000;
+    // endregion
 
+    // region static vars
     private static OkHttpClientFactory okHttpClientFactory;
+    // endregion
+
+    // region ivar(s)
     private final OkHttpClient okHttpClient;
+    // endregion
 
-
+    // region instance generator
     public static OkHttpClient genClient() {
         if (okHttpClientFactory == null) okHttpClientFactory = new OkHttpClientFactory();
 
         return okHttpClientFactory.okHttpClient;
     }
+    // endregion
 
+    // region constructor (private)
     private OkHttpClientFactory() {
         OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder();
         configureTimeouts(okHttpClientBuilder);
         okHttpClient = okHttpClientBuilder.build();
     }
+    // endregion
 
     // region Timeout.
     private void configureTimeouts(OkHttpClient.Builder builder) {

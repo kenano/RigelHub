@@ -11,7 +11,6 @@ import java.util.Locale;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -19,9 +18,13 @@ import static android.content.ContentValues.TAG;
 
 public class GithubClientFacade {
 
+    // region url template string constant
     private static final String BASE_URL = "https://api.github.com/search/repositories?q=+org:%1$s&sort=stars&order=desc";
+    // endregion
 
+    // region ivar(s)
     private NetworkFacade networkFacade;
+    // endregion
 
     // region Setter(s).
     public void setNetworkFacade(NetworkFacade networkFacade) {
@@ -41,10 +44,9 @@ public class GithubClientFacade {
                 .subscribe(
                         (searchResults) -> onNext(searchResults, listener),
                         (error) -> onError(error, listener)
-        );
+                );
     }
     // endregion
-
 
     // region Internal Request.
     private Observable<String> makeRequest(@NonNull final String url) {
@@ -52,7 +54,7 @@ public class GithubClientFacade {
     }
     // endregion
 
-
+    // region parser(s)
     private Observable<ClientResults> parse(@NonNull String dataAsString) {
         return Observable.create((observer) -> {
             try {
@@ -66,6 +68,7 @@ public class GithubClientFacade {
             }
         });
     }
+    // endregion
 
     // region url helpers
     private String buildUrl(String query) {
@@ -77,11 +80,11 @@ public class GithubClientFacade {
     }
     // endregion
 
+    // region observable helpers
     private void onNext(ClientResults results, ClientCallback listener) {
         if (listener != null) {
             listener.onUpdate(results);
         }
-//        compositeDisposable.dispose();
     }
 
     private void onError(Throwable ex, ClientCallback listener) {
@@ -89,4 +92,5 @@ public class GithubClientFacade {
             listener.onError(ex);
         }
     }
+    // endregion
 }

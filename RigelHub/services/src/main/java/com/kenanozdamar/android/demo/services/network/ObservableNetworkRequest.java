@@ -4,15 +4,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-
 import com.kenanozdamar.android.demo.services.network.exceptions.NetworkException;
-
-import org.reactivestreams.Subscriber;
 
 import java.net.SocketTimeoutException;
 
 import io.reactivex.Observable;
-
 import io.reactivex.ObservableEmitter;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -40,41 +36,51 @@ public class ObservableNetworkRequest {
     private Observable<String> makeRequest(@NonNull Request request) {
         return Observable.create((emitter) -> {
             final OkHttpClient client = OkHttpClientFactory.genClient();
-                    try {
-                        final Response response = client.newCall(request).execute();
-                        if (!response.isSuccessful()) {
-                            final String msg = response.message();
-                            final int code = response.code();
-                            final String url = request.url().toString();
-                            handleError(emitter, url, code, msg, null);
-                            response.close();
-                            return;
-                        }
+            try {
+                final Response response = client.newCall(request).execute();
+                if (!response.isSuccessful()) {
+                    final String msg = response.message();
+                    final int code = response.code();
+                    final String url = request.url().toString();
+                    handleError(emitter, url, code, msg, null);
+                    response.close();
+                    return;
+                }
 
-                        final ResponseBody body = response.body();
+                final ResponseBody body = response.body();
 
-                        //test for headers
-                        Log.d(TAG, "Headers: " + response.headers().toString());
+                if (body == null) {
+                    final String msg = response.message();
+                    final int code = response.code();
+                    final String url = request.url().toString();
+                    handleError(emitter, url, code, msg, null);
+                    response.close();
+                    return;
+                }
 
-                        if (body == null) {
-//                            handleError(response.message());
-                            response.close();
-                            return;
-                        }
+                if (response.cacheResponse() != null) {
+                    Log.d(TAG, "Cached response found for: " + request.url());
+                }
 
-                        if (response.cacheResponse() != null) {
-                            Log.d(TAG, "Cached response found for: " + request.url());
-                        }
+                final String contents = body.string();
+                emitter.onNext(contents);
+                emitter.onComplete();
 
-                        final String contents = body.string();
-                        emitter.onNext(contents);
-                        emitter.onComplete();
-
-                    } catch (SocketTimeoutException ex) {
-//                        handleError("SocketTimeout Exception");
-                    } catch (Throwable throwable) {
-//                        handleError(throwable.getMessage());
-                    }
+            } catch (SocketTimeoutException ex) {
+                Log.w(TAG, " Error on request to url < "
+                        + request.url().toString()
+                        + " > and message < "
+                        + ex.getMessage()
+                        + " >"
+                );
+            } catch (Throwable throwable) {
+                Log.w(TAG, "Error on request to url < "
+                        + request.url().toString()
+                        + " > and message < "
+                        + throwable.getMessage()
+                        + " >"
+                );
+            }
         });
     }
     // endregion
@@ -104,7 +110,7 @@ public class ObservableNetworkRequest {
                 )
         );
     }
-}
     // endregion
+}
 
 

@@ -23,7 +23,7 @@ public class Item {
     private Owner owner;
     // endregion
 
-
+    // region getters/setters
     public String getName() {
         return name;
     }
@@ -63,4 +63,5 @@ public class Item {
     public void setOwner(Owner owner) {
         this.owner = owner;
     }
+    //endregion
 }

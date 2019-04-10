@@ -16,7 +16,7 @@ public class ClientResults {
     private List<Item> items;
     //endregion
 
-
+    // region getters/setters
     public String getTotalCount() {
         return totalCount;
     }
@@ -32,4 +32,5 @@ public class ClientResults {
     public void setItems(List<Item> items) {
         this.items = items;
     }
+    // endregion
 }

@@ -7,8 +7,6 @@ import android.support.annotation.StringRes;
 import com.kenanozdamar.android.demo.rigelhub.R;
 import com.kenanozdamar.android.demo.rigelhub.error.ErrorType;
 
-
-
 public class AlertDialogManager {
     public static void displayErrorAlert(Context context, ErrorType type) {
         switch (type) {

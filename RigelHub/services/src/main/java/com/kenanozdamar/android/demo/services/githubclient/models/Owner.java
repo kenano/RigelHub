@@ -6,12 +6,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Owner {
 
+    // region ivar(s)
     @JsonProperty("avatar_url")
     private String avatarUrl;
 
     @JsonProperty("login")
     private String orgName;
+    // endregion
 
+    // region getters/setters
     public String getAvatarUrl() {
         return avatarUrl;
     }
@@ -27,4 +30,5 @@ public class Owner {
     public void setOrgName(String orgName) {
         this.orgName = orgName;
     }
+    // endregion
 }

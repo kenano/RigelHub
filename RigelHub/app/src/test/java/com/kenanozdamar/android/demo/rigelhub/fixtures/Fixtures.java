@@ -10,6 +10,7 @@ import java.io.InputStream;
 
 public class Fixtures {
 
+    // region ClientResult mock builders
     public ClientResults validResults() {
         ClientResults clientResults;
         try {
@@ -129,6 +130,7 @@ public class Fixtures {
         }
         return clientResults;
     }
+    // endregion
 
     //region InputStream method(s)
     private String stringForFile(String filename) {
@@ -145,5 +147,5 @@ public class Fixtures {
         }
         return json;
     }
-    //end region
+    //endregion
 }

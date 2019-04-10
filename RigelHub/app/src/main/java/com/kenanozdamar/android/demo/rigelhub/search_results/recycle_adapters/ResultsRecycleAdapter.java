@@ -24,18 +24,25 @@ public class ResultsRecycleAdapter
     private static final String TAG = ResultsRecycleAdapter.class.getSimpleName();
     // endregion
 
+    // region ivar(s)
     private List<SearchResult> data = new ArrayList<>();
     private Context context;
     private FragmentCallbacks callbacks;
+    // endregion
 
+    // region constructor
     public ResultsRecycleAdapter(@NonNull Context context) {
         this.context = context;
     }
+    // endregion
 
+    // region register
     public void register(FragmentCallbacks callbacks) {
         this.callbacks = callbacks;
     }
+    // endregion
 
+    // region getters/setters
     public void setData(List<SearchResult> items) {
         data.clear();
         data.addAll(items);
@@ -48,7 +55,9 @@ public class ResultsRecycleAdapter
     public SearchResult getDataItem(int position) {
         return data.get(position);
     }
+    // endregion
 
+    // region Recycler overrides
     @NonNull
     @Override
     public ResultViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -69,7 +78,9 @@ public class ResultsRecycleAdapter
     public int getItemCount() {
         return data.size();
     }
+    // endregion
 
+    // region ViewHolder
     class ResultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView title;
@@ -93,4 +104,5 @@ public class ResultsRecycleAdapter
 
         }
     }
+    // endregion
 }
